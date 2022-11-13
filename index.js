@@ -30,3 +30,37 @@ app.get("/api/hello", function (req, res) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+
+app.get("/api/:date?", (req, res) => {
+  if (req.params.date === undefined) {
+    const now = new Date();
+
+    res.json({
+      unix: now.getTime(),
+      utc: now.toUTCString()
+    })
+  } else if (/^[\d]+$/.test(req.params.date)) {
+    const dateReq = new Date(parseInt(req.params.date))
+
+    res.json({
+      unix: dateReq.getTime(),
+      utc: dateReq.toUTCString()
+    })
+  } else {
+    // console.log('enters', req.params.date);
+    const dateReq = new Date(req.params.date);
+    // console.log(typeof dateReq);
+
+    if (dateReq == "Invalid Date") {
+      res.json({
+        error: "Invalid Date"
+      })
+    } else {
+      res.json({
+        unix: dateReq.getTime(),
+        utc: dateReq.toUTCString()
+      })
+    }
+  }
+})
